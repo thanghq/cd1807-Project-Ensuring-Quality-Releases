@@ -7,7 +7,7 @@ tenant_id       = "f958e84a-92b8-439f-a62d-4f45996b6d07"
 # Resource Group/Location
 location         = "West Europe"
 resource_group   = "Azuredevops"
-application_type = "myApplication"
+application_type = "clark-test-api"
 
 # Network
 virtual_network_name = "MY_VNET"
