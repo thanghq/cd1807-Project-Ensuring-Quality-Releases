@@ -19,7 +19,6 @@ variables:
   # Environment name
   environmentName: 'test'
   webappName: 'clark-test-api-AppService'
-  - group: ssh-config
 
 stages:
 #--------------------------------------------#  
