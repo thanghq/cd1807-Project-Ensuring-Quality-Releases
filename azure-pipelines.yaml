@@ -44,7 +44,7 @@ stages:
 
     - script: |
         echo 'Replace $(terraform_tfvars.secureFilePath) to terraform folder...'
-        cp -rf $(caCertificate.secureFilePath) $(System.DefaultWorkingDirectory)/terraform/environments/test
+        cp -f $(terraform_tfvars.secureFilePath) $(System.DefaultWorkingDirectory)/terraform/environments/test
     
     # Run Terraform Init on the pipeline agent 
     - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
