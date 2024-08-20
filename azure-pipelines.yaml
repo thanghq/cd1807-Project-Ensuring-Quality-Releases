@@ -38,7 +38,7 @@ stages:
     
     - task: DownloadSecureFile@1
       name: terraform_tfvars
-      displayName: 
+      displayName: 'Get terraform.tfvars file'
       inputs:
         secureFile: 'terraform.tfvars'
 
