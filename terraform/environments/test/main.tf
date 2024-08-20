@@ -7,10 +7,10 @@ provider "azurerm" {
 }
 terraform {
   backend "azurerm" {
-    storage_account_name = "tfstate23821071"
+    resource_group_name  = "Azuredevops"
+    storage_account_name = "tfstate3188514544"
     container_name       = "tfstate"
     key                  = "test.terraform.tfstate"
-    access_key           = "i4NkCJ8fXk5ulBguCMQI39QiPDtn2VMFSdociGPRynqm5Rd08keJQ3Nyo6Pt2zu99nS+TCsgwXNj+ASteZl2sw=="
   }
 }
 module "resource_group" {
