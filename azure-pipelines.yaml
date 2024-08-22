@@ -268,10 +268,17 @@ stages:
           - task: PublishTestResults@2
             inputs:
               testResultsFormat: 'JUnit'
-              testResultsFiles: '**/TEST-*.xml'
+              testResultsFiles: '**/TEST-Regression.xml'
               searchFolder: $(System.DefaultWorkingDirectory)/automatedtesting/postman
               mergeTestResults: true
-              testRunTitle: 'Test-$(Date:yyyyMMdd).$(Rev:r)'
+              testRunTitle: 'Test-Regression'
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/TEST-DataValidation.xml'
+              searchFolder: $(System.DefaultWorkingDirectory)/automatedtesting/postman
+              mergeTestResults: true
+              testRunTitle: 'Test-DataValidation'
   #--------------------------------------------#    
   # Selenium Test on VM
   - deployment: VMDeploy
