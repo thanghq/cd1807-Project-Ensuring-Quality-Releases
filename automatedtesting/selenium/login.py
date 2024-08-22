@@ -70,7 +70,7 @@ def check_out(driver):
     driver.find_element(By.ID, 'back-to-products').click()  
 
 if __name__ == "__main__":
-    COUNT = 5
+    COUNT = 6
     driver = login('standard_user', 'secret_sauce')
     add_to_cart(driver, COUNT)
     remove_item_in_cart(driver, COUNT)
