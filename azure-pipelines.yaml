@@ -241,13 +241,11 @@ stages:
 
           #--------------------------------------------#    
           # Install Nodejs    
-          - task: Bash@3
+          - task: CmdLine@2
+            displayName: Install Nodejs
             inputs:
-              targetType: 'inline'
-              script: |
-              #! /bin/bash
-              sudo apt-get update
-              sudo apt-get -y install nodejs
+              script: 'sudo apt-get update && sudo apt-get -y install nodejs'
+              workingDirectory: $(System.DefaultWorkingDirectory)
 
           #--------------------------------------------#    
           # Postman - Install Newman    
