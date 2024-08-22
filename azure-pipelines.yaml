@@ -181,6 +181,7 @@ stages:
   #--------------------------------------------#  
   # Run performance test on agent
   - deployment: Run_Test
+    displayName: Performance Tests & Functional Test
     pool: myAgentPool
     environment: $(environmentName)   # ToDo
     strategy:
@@ -244,7 +245,7 @@ stages:
           - task: CmdLine@2
             displayName: Install Nodejs
             inputs:
-              script: 'sudo apt-get update && sudo apt-get -y install nodejs'
+              script: 'sudo apt-get update && sudo apt-get -y install nodejs && sudo apt-get -y install npm'
               workingDirectory: $(System.DefaultWorkingDirectory)
 
           #--------------------------------------------#    
@@ -300,14 +301,15 @@ stages:
               script: |           
                 #! /bin/bash
                 mv $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip ~/app
-                cd app
-                unzip -o $(Build.BuildId)-uitests.zip
+                cd ~/app && unzip -o $(Build.BuildId)-uitests.zip
                 echo "Starting Selenium Tests"
-                python3 login.py > selenium-test-output.log
-                cat selenium-test-output.log
-                cd $(System.DefaultWorkingDirectory)
-                mkdir -p log/selenium
-                sudo cp ~/app/selenium-test-output.log log/selenium
+                cd ~/app && python3 login.py > selenium-test-output.log && cat selenium-test-output.log
+                mkdir -p $(System.DefaultWorkingDirectory)/log/selenium
+                sudo cp ~/app/selenium-test-output.log $(System.DefaultWorkingDirectory)/log/selenium
+                sudo mkdir -p /var/log/selenium
+                sudo chmod 664 /var/log/selenium
+                sudo cp ~/app/selenium-test-output.log /var/log/selenium
+
           - publish: $(System.DefaultWorkingDirectory)/log/selenium/selenium-test-output.log
             displayName: 'Publish selenium logs'
             artifact: drop-selenium-logs
