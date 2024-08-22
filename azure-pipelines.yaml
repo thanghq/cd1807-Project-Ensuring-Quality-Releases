@@ -166,7 +166,7 @@ stages:
                 cd app
                 FILE=~/app/chromedriver_linux64.zip
                 if [ ! -f "$FILE" ]; then
-                    LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                    LATEST=$(chromium-browser --product-version)
                     wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
                     unzip -o chromedriver_linux64.zip
                     sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
@@ -302,7 +302,7 @@ stages:
                 mv $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip ~/app
                 cd ~/app && unzip -o $(Build.BuildId)-uitests.zip
                 echo "Starting Selenium Tests"
-                cd ~/app && python3 login.py > selenium-test-output.log && cat selenium-test-output.log
+                cd ~/app && python3 login.py >> selenium-test-output.log && cat selenium-test-output.log
                 mkdir -p $(System.DefaultWorkingDirectory)/log/selenium
                 sudo cp ~/app/selenium-test-output.log $(System.DefaultWorkingDirectory)/log/selenium
                 sudo mkdir -p /var/log/selenium
