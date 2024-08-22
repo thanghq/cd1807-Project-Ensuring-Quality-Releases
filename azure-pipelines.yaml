@@ -242,13 +242,13 @@ stages:
           #--------------------------------------------#    
           # Install Nodejs    
           - task: Bash@3
-            displayName: Install Newman
             inputs:
               targetType: 'inline'
               script: |
+              #! /bin/bash
               sudo apt-get update
               sudo apt-get -y install nodejs
-              
+
           #--------------------------------------------#    
           # Postman - Install Newman    
           - task: CmdLine@2
