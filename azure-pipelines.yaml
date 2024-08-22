@@ -241,14 +241,6 @@ stages:
             artifact: drop-jmeter
 
           #--------------------------------------------#    
-          # Install Nodejs    
-          - task: CmdLine@2
-            displayName: Install Nodejs
-            inputs:
-              script: 'sudo apt-get update && sudo apt-get -y install nodejs && sudo apt-get -y install npm'
-              workingDirectory: $(System.DefaultWorkingDirectory)
-
-          #--------------------------------------------#    
           # Postman - Install Newman    
           - task: CmdLine@2
             displayName: Install Newman
