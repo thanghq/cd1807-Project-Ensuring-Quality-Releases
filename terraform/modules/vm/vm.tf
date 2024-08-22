@@ -34,4 +34,10 @@ resource "azurerm_linux_virtual_machine" "myVM" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+  lifecycle {
+    ignore_changes = [
+      identity,
+      tags
+    ]
+  }
 }

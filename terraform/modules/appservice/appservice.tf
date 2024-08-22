@@ -18,4 +18,11 @@ resource "azurerm_windows_web_app" "test" {
   site_config {
     always_on = false
   }
+
+  lifecycle {
+    ignore_changes = [
+      logs,
+      tags
+    ]
+  }
 }
