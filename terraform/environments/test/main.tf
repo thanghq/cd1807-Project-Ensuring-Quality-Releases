@@ -61,4 +61,6 @@ module "vm" {
   resource_type        = "vm"
   subnet_id            = module.network.subnet_id_test
   public_ip_address_id = module.publicip.public_ip_address_id
+  username             = var.username
+  public_key           = var.public_key
 }

@@ -37,8 +37,8 @@ stages:
         terraformVersion: '1.2.9'
     
     - task: DownloadSecureFile@1
-      name: terraform_tfvars
       displayName: 'Get terraform.tfvars file'
+      name: terraform_tfvars
       inputs:
         secureFile: 'terraform.tfvars'
 
@@ -135,20 +135,20 @@ stages:
     #     mergeTestResults: true
     #     testRunTitle:       # ToDo
 
-    # #--------------------------------------------#
-    # # Selenium (UI) Test Suite - Archive the package  
-    # # "ArchiveFiles@2" picks up the web package and archives it.
-    # - task: ArchiveFiles@2
-    #   displayName: 'Archive UI Tests'
-    #   inputs:
-    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
-    #     includeRootFolder: false
-    #     archiveType: 'zip'
-    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip'
-    # # Selenium Test Suite - Publish the package  
-    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip   # Same as the archiveFile artifact above. 
-    #   displayName: 'Upload Package'
-    #   artifact: drop-uitests
+    #--------------------------------------------#
+    # Selenium (UI) Test Suite - Archive the package  
+    # "ArchiveFiles@2" picks up the web package and archives it.
+    - task: ArchiveFiles@2
+      displayName: 'Archive UI Tests'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip'
+    # Selenium Test Suite - Publish the package  
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip   # Same as the archiveFile artifact above. 
+      displayName: 'Upload Package'
+      artifact: drop-uitests
 
     #--------------------------------------------#    
     # FakeRestAPI - Archive
@@ -202,15 +202,53 @@ stages:
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           - task: CmdLine@2
+            displayName: 'Install Java & Jmeter'
             inputs:
               script: |
+                sudo apt-get install openjdk-11-jre-headless -y
                 wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz"
                 tar -xf apache-jmeter-5.6.3.tgz
+                mkdir -p log/jmeter
                 unzip -o $(Build.BuildId)-perftests.zip
-                ./apache-jmeter-5.6.3/bin/jmeter -n -t Starter.jmx -j jmeter.log -f
-                cat jmeter.log                                                                           # ToDo: Write your commands
-              workingDirectory: $(Pipeline.Workspace)/drop-perftests            # ToDo: Use the artifact name from the task above
-              
+              workingDirectory: $(Pipeline.Workspace)/drop-perftests
+          - task: CmdLine@2
+            displayName: 'Jmeter Stress Test'
+            inputs:
+              script: |
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t StressTest.jmx -l log/jmeter/stress-test-result.csv -e -f -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
+                cat log/jmeter/jmeter-stress-test.log                                                              
+              workingDirectory: $(Pipeline.Workspace)/drop-perftests
+          - task: CmdLine@2
+            displayName: 'Jmeter Endurance Test'
+            inputs:
+              script: |
+                ./apache-jmeter-5.6.3/bin/jmeter -n -t EnduranceTest.jmx -l log/jmeter/endurance-test-result.csv -e -f -o log/jmeter/endurance-test-html-report -j log/jmeter/jmeter-endurance-test.log
+                cat log/jmeter/jmeter-endurance-test.log                                                              
+              workingDirectory: $(Pipeline.Workspace)/drop-perftests
+          #--------------------------------------------#
+          - task: ArchiveFiles@2
+            displayName: 'Archive Stress Test Result'
+            inputs:
+              rootFolderOrFile: '$(Pipeline.Workspace)/drop-perftests/log/jmeter/stress-test-html-report'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Pipeline.Workspace)/drop-perftests/log/jmeter/stress-test-html-report.zip'
+              verbose: true
+          - publish: $(Pipeline.Workspace)/drop-perftests/log/jmeter/stress-test-html-report.zip
+            displayName: 'Upload Stress Test Result'
+            artifact: drop-jmeter
+          #--------------------------------------------#
+          - task: ArchiveFiles@2
+            displayName: 'Archive Endurance Test Result'
+            inputs:
+              rootFolderOrFile: '$(Pipeline.Workspace)/drop-perftests/log/jmeter/endurance-test-html-report'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Pipeline.Workspace)/drop-perftests/log/jmeter/endurance-test-html-report.zip'
+              verbose: true
+          - publish: $(Pipeline.Workspace)/drop-perftests/log/jmeter/endurance-test-html-report.zip
+            displayName: 'Upload Endurance Test Result'
+            artifact: drop-jmeter
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
   # ToDo: 
